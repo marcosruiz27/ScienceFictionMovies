@@ -17,7 +17,7 @@ const MoviesList: React.FC = () => {
   useEffect(() => {
     const getMovies = async () => {
       const moviesData = await fetchMovies()
-      console.log('Movies data in component:', moviesData) // Log movies data to confirm
+      console.log('Movies data in component:', moviesData)
       setMovies(moviesData)
       setLoading(false)
     }
