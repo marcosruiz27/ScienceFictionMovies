@@ -1,11 +1,11 @@
-function App() {
+import React from 'react'
+import MoviesList from './MoviesList'
+
+const App: React.FC = () => {
   return (
-    <>
-      <header className="header">
-        <h1>My Collection</h1>
-      </header>
-      <section className="main">{/* add your code here */}</section>
-    </>
+    <div>
+      <MoviesList />
+    </div>
   )
 }
 
