@@ -181,3 +181,11 @@ export const useUpdateMovie = () => {
     },
   )
 }
+
+export const fetchMovieById = async (id: number): Promise<Movie> => {
+  const response = await fetch(`/api/movies/${id}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch movie')
+  }
+  return response.json()
+}

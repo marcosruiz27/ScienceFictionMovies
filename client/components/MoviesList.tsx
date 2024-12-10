@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { fetchMovies, deleteMovie, updateMovie } from '../apis/movies'
+import { useNavigate } from 'react-router-dom'
+import { fetchMovies, deleteMovie } from '../apis/movies'
 
 interface Movie {
   id: number
@@ -13,21 +14,19 @@ interface Movie {
 const MoviesList: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  const [editMovieId, setEditMovieId] = useState<number | null>(null)
-  const [updatedMovie, setUpdatedMovie] = useState<Partial<Movie>>({
-    name: '',
-    description: '',
-    release_year: 0,
-    director: '',
-    duration: 0,
-  })
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getMovies = async () => {
-      const moviesData = await fetchMovies()
-      console.log('Movies data in component:', moviesData)
-      setMovies(moviesData)
-      setLoading(false)
+      try {
+        const moviesData = await fetchMovies()
+        console.log('Movies data in component:', moviesData)
+        setMovies(moviesData)
+      } catch (error) {
+        console.error('Error fetching movies:', error)
+      } finally {
+        setLoading(false)
+      }
     }
 
     getMovies()
@@ -43,32 +42,9 @@ const MoviesList: React.FC = () => {
     }
   }
 
-  const handleEdit = (movie: Movie) => {
-    setEditMovieId(movie.id)
-    setUpdatedMovie({
-      name: movie.name,
-      description: movie.description,
-      release_year: movie.release_year,
-      director: movie.director,
-      duration: movie.duration,
-    })
-  }
-
-  const handleUpdate = async () => {
-    if (editMovieId && updatedMovie.name) {
-      try {
-        const updated = await updateMovie(editMovieId, updatedMovie)
-        // Update the movie in the state
-        setMovies(
-          movies.map((movie) =>
-            movie.id === editMovieId ? { ...movie, ...updated } : movie,
-          ),
-        )
-        setEditMovieId(null) // Close the edit form
-      } catch (error) {
-        console.error('Error updating movie:', error)
-      }
-    }
+  const handleEdit = (id: number) => {
+    // Redirect to the edit movie page
+    navigate(`/edit-movie/${id}`)
   }
 
   if (loading) {
@@ -76,11 +52,10 @@ const MoviesList: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Science Fiction Movies</h1>
-      <ul style={{ listStyleType: 'none', padding: 0 }}>
+    <div className="movie-list-container">
+      <ul className="movie-list">
         {movies.map((movie) => (
-          <li key={movie.id} style={{ marginBottom: '20px' }}>
+          <li key={movie.id} className="movie-item">
             <h2>
               {movie.name} ({movie.release_year})
             </h2>
@@ -93,61 +68,20 @@ const MoviesList: React.FC = () => {
             <p>
               <strong>Duration:</strong> {movie.duration} minutes
             </p>
-            <button onClick={() => handleDelete(movie.id)}>Delete</button>
-            <button onClick={() => handleEdit(movie)}>Edit</button>
+            <div className="movie-actions">
+              <button
+                onClick={() => handleDelete(movie.id)}
+                className="delete-btn"
+              >
+                Delete
+              </button>
+              <button onClick={() => handleEdit(movie.id)} className="edit-btn">
+                Edit
+              </button>
+            </div>
           </li>
         ))}
       </ul>
-
-      {editMovieId && (
-        <div>
-          <h2>Edit Movie</h2>
-          <input
-            type="text"
-            placeholder="Movie Name"
-            value={updatedMovie.name}
-            onChange={(e) =>
-              setUpdatedMovie({ ...updatedMovie, name: e.target.value })
-            }
-          />
-          <textarea
-            placeholder="Description"
-            value={updatedMovie.description}
-            onChange={(e) =>
-              setUpdatedMovie({ ...updatedMovie, description: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Release Year"
-            value={updatedMovie.release_year}
-            onChange={(e) =>
-              setUpdatedMovie({
-                ...updatedMovie,
-                release_year: +e.target.value,
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Director"
-            value={updatedMovie.director}
-            onChange={(e) =>
-              setUpdatedMovie({ ...updatedMovie, director: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Duration (minutes)"
-            value={updatedMovie.duration}
-            onChange={(e) =>
-              setUpdatedMovie({ ...updatedMovie, duration: +e.target.value })
-            }
-          />
-          <button onClick={handleUpdate}>Update Movie</button>
-          <button onClick={() => setEditMovieId(null)}>Cancel</button>
-        </div>
-      )}
     </div>
   )
 }
