@@ -15,7 +15,7 @@ export interface Movie {
 export const fetchMovies = async (): Promise<Movie[]> => {
   try {
     console.log('Fetching movies...')
-    const response = await fetch('http://localhost:3000/api/movies')
+    const response = await fetch('/api/movies')
 
     console.log('Response status:', response.status)
 
@@ -49,7 +49,7 @@ export const addMovie = async (newMovie: Omit<Movie, 'id'>): Promise<Movie> => {
   console.log('Adding movie:', newMovie)
 
   try {
-    const response = await fetch('http://localhost:3000/api/movies', {
+    const response = await fetch('/api/movies', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export const deleteMovie = async (id: number): Promise<void> => {
   console.log('Deleting movie with ID:', id)
 
   try {
-    const response = await fetch(`http://localhost:3000/api/movies/${id}`, {
+    const response = await fetch(`/api/movies/${id}`, {
       method: 'DELETE',
     })
 
@@ -106,7 +106,7 @@ export const updateMovie = async (
   console.log('Updating movie with ID:', id, 'Updated data:', updatedData)
 
   try {
-    const response = await fetch(`http://localhost:3000/api/movies/${id}`, {
+    const response = await fetch(`/api/movies/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
