@@ -1,8 +1,9 @@
 import express from 'express'
 import knexLib from 'knex'
 import knexConfig from '../db/knexfile'
+import connection from '../db/connection'
 
-const knex = knexLib(knexConfig.development)
+const knex = connection
 const router = express.Router()
 
 // GET all movies
