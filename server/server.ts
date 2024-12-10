@@ -1,10 +1,16 @@
 import * as Path from 'node:path'
 import express from 'express'
 import moviesRoutes from './routes/movies'
+import cors from 'cors'
 
 const server = express()
+
+// Enable CORS if frontend and backend are on different ports
+server.use(cors())
+
 server.use(express.json())
 
+// Use the moviesRoutes for /api/movies endpoint
 server.use('/api/movies', moviesRoutes)
 
 if (process.env.NODE_ENV === 'production') {
